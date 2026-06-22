@@ -97,6 +97,18 @@ body {
   letter-spacing: -0.03em;
   line-height: 1.3;
   word-break: keep-all;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.megaphone-icon {
+  width: 36px;
+  height: 36px;
+  color: var(--color-primary);
+  flex-shrink: 0;
 }
 
 .point-blue {
@@ -137,7 +149,7 @@ body {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   width: 100%;
   padding-left: 20px;
 }
@@ -146,11 +158,25 @@ body {
   font-size: 18px;
   font-weight: 600;
   color: #1E293B;
-  line-height: 1.5;
+  line-height: 1.4;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   word-break: keep-all;
+  letter-spacing: -0.02em;
+}
+
+.arrow-square {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  border-radius: 6px;
+  font-size: 11px;
+  flex-shrink: 0;
 }
 
 .point-blue-text {
@@ -178,19 +204,19 @@ body {
   border-radius: var(--radius-lg);
   width: 320px;
   height: 180px;
-  padding: 24px;
+  padding: 16px 24px;   /* Balanced padding inside the cards */
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
   font-size: 24px;
-  font-weight: 800;
-  color: #1E293B;       /* Center bold dark gray text */
+  font-weight: 900;     /* Bold visual weight */
+  color: #1E293B;       /* Clean dark gray text */
   text-align: center;
   transition: var(--transition-smooth);
   outline: none;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em; /* Compact, polished letter spacing */
   word-break: keep-all;
 }
 
