@@ -1,7 +1,6 @@
 /**
-   GAON Health Checkup Kiosk - Video App Controller
-   Manages interactive modals, video preloading/autoplay,
-   audio bypassing constraints, and fallback error display.
+   GAON Health Checkup Kiosk - Video App Controller (Google Drive iframe version)
+   Manages interactive modals, iframe source swapping, and loading spinner overlays.
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -9,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /**
- * Kiosk Modal & Video Core System
+ * Kiosk Modal & iframe Video Core System
  */
 function initKioskSystem() {
   // Elements
@@ -19,11 +18,7 @@ function initKioskSystem() {
   const closeBtn = document.getElementById("btn-close-modal");
   const doneBtn = document.getElementById("btn-modal-done");
   
-  const video = document.getElementById("kiosk-video");
-  const muteBtn = document.getElementById("btn-video-mute");
-  const muteIcon = document.getElementById("mute-icon");
-  const replayBtn = document.getElementById("btn-video-replay");
-  
+  const iframe = document.getElementById("kiosk-iframe");
   const fallbackOverlay = document.getElementById("video-fallback");
   const fallbackUrlCode = document.getElementById("fallback-target-url");
   const fallbackStatusMsg = fallbackOverlay.querySelector(".status-msg");
@@ -45,7 +40,7 @@ function initKioskSystem() {
     });
   });
 
-  // Open modal and load/play video
+  // Open modal and load Google Drive preview link
   function openVideoModal(type, videoUrl) {
     // 1. Update titles & codes
     modalTitle.textContent = examTitles[type] || "안내 동영상 재생";
@@ -53,56 +48,31 @@ function initKioskSystem() {
 
     // Reset Fallback Overlay to loading state
     fallbackOverlay.classList.add("active");
-    fallbackStatusMsg.textContent = "스트리밍 서버 연결 중...";
+    fallbackStatusMsg.textContent = "안내 영상을 불러오는 중...";
     fallbackOverlay.querySelector(".status-icon").className = "fa-solid fa-circle-notch status-icon fa-spin";
 
-    // 2. Configure video tags
-    video.src = videoUrl;
-    video.load();
+    // 2. Set iframe src (trigger load)
+    iframe.src = videoUrl;
 
     // 3. Open overlay panel
     modalOverlay.classList.add("active");
 
     // Tactile feedback sound
     playBeep(650, 0.08);
-
-    // 4. Autoplay execution with browser audio constraints bypassed (initially muted)
-    video.muted = true;
-    updateMuteUI(true);
-
-    // Play video
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          // Playback started successfully
-          console.log(`Video playback started for Type ${type}`);
-          
-          // Set a timeout to check if video load succeeded or stalled
-          // Since https://r2.dev returns an HTML doc rather than video, it will trigger error event.
-          // In case it doesn't trigger error but just stalls, we check after 2 seconds.
-          setTimeout(() => {
-            if (video.readyState < 3 && fallbackOverlay.classList.contains("active")) {
-              showFallbackError(videoUrl);
-            } else if (video.readyState >= 3) {
-              fallbackOverlay.classList.remove("active");
-            }
-          }, 2000);
-        })
-        .catch(err => {
-          console.warn("Autoplay block detected or file loading error:", err);
-          showFallbackError(videoUrl);
-        });
-    }
   }
+
+  // Handle iframe load completion to hide the loader spinner
+  iframe.onload = () => {
+    fallbackOverlay.classList.remove("active");
+    console.log("iframe content loaded successfully.");
+  };
 
   // Handle Close Action
   function closeVideoModal() {
     modalOverlay.classList.remove("active");
     
-    // Stop video and release resource
-    video.pause();
-    video.src = "";
+    // Clear iframe source to stop playback immediately
+    iframe.src = "about:blank";
     
     playBeep(500, 0.08);
   }
@@ -117,44 +87,6 @@ function initKioskSystem() {
       closeVideoModal();
     }
   });
-
-  // Mute/Unmute toggle handler
-  muteBtn.addEventListener("click", () => {
-    video.muted = !video.muted;
-    updateMuteUI(video.muted);
-    playBeep(600, 0.04);
-  });
-
-  function updateMuteUI(isMuted) {
-    if (isMuted) {
-      muteIcon.className = "fa-solid fa-volume-xmark";
-      muteBtn.classList.add("muted-active");
-    } else {
-      muteIcon.className = "fa-solid fa-volume-high";
-      muteBtn.classList.remove("muted-active");
-    }
-  }
-
-  // Replay handler
-  replayBtn.addEventListener("click", () => {
-    video.currentTime = 0;
-    video.play();
-    playBeep(700, 0.05);
-  });
-
-  // Video playback error listener
-  video.addEventListener("error", (e) => {
-    console.warn("HTML5 Video element encountered error:", e);
-    showFallbackError(video.src);
-  });
-
-  // Show Connection/Error Fallback Panel
-  function showFallbackError(url) {
-    fallbackOverlay.classList.add("active");
-    fallbackStatusMsg.textContent = "안내 영상 스트리밍 연결 실패";
-    fallbackOverlay.querySelector(".status-icon").className = "fa-solid fa-circle-exclamation status-icon";
-    console.log(`Fallback display triggered for url: ${url}`);
-  }
 
   // Interactive Beep tone for tactile feedback
   function playBeep(frequency = 800, duration = 0.1) {

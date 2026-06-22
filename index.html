@@ -79,32 +79,19 @@
       <!-- Video Body Section -->
       <div class="modal-body">
         <div class="video-wrapper">
-          <!-- Video Tag: autoplay, muted, playsinline are strictly included -->
-          <video id="kiosk-video" autoplay muted playsinline width="100%" height="100%">
-            Your browser does not support the video tag.
-          </video>
-
-          <!-- Custom Video Control Overlays -->
-          <div class="video-overlay-controls">
-            <button id="btn-video-mute" class="video-control-btn mute-btn" aria-label="음소거 해제">
-              <i id="mute-icon" class="fa-solid fa-volume-xmark"></i>
-            </button>
-            <button id="btn-video-replay" class="video-control-btn replay-btn" aria-label="다시 재생">
-              <i class="fa-solid fa-rotate-right"></i>
-            </button>
-          </div>
+          <!-- iframe Tag: replaces the raw video player to support Google Drive preview -->
+          <iframe id="kiosk-iframe" width="100%" height="100%" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
           <!-- High-Fidelity Connection/Error Fallback Overlay -->
           <div id="video-fallback" class="video-fallback-overlay active">
             <div class="spinner-loader"></div>
             <div class="fallback-status">
-              <i class="fa-solid fa-circle-exclamation status-icon"></i>
-              <span class="status-msg">스트리밍 서버 연결 중...</span>
+              <i class="fa-solid fa-circle-notch fa-spin status-icon"></i>
+              <span class="status-msg">안내 영상을 불러오는 중...</span>
             </div>
             <div class="fallback-details">
-              <p class="fallback-url-label">직접 연결 대상 URL:</p>
-              <code id="fallback-target-url" class="fallback-url-code">https://r2.dev</code>
-              <p class="fallback-note">본 시스템은 미디어 스트리밍이 차단되거나 유효하지 않은 형식의 경우에도 화면 정지 없이 복구 가이드를 제공합니다.</p>
+              <p class="fallback-url-label">연결 대상 URL:</p>
+              <code id="fallback-target-url" class="fallback-url-code">https://drive.google.com</code>
             </div>
           </div>
         </div>
