@@ -1,92 +1,20 @@
 /**
    GAON Health Checkup Kiosk - Video App Controller
-   Manages clock updates, responsive scaling, interactive modals, video preloading/autoplay,
+   Manages interactive modals, video preloading/autoplay,
    audio bypassing constraints, and fallback error display.
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Clock Initialization
-  initClock();
-
-  // Responsive Scale Initialization
-  initScaling();
-
-  // Kiosk Modal & Video System Initialization
   initKioskSystem();
 });
 
 /**
- * 1. Digital Clock System
- */
-function initClock() {
-  const clockEl = document.getElementById("current-clock");
-  if (!clockEl) return;
-
-  function updateTime() {
-    const now = new Date();
-    let hours = now.getHours();
-    let minutes = now.getMinutes();
-    let seconds = now.getSeconds();
-
-    // Pad single digits with leading zeros
-    hours = hours < 10 ? "0" + hours : hours;
-    minutes = minutes < 10 ? "0" + minutes : minutes;
-    seconds = seconds < 10 ? "0" + seconds : seconds;
-
-    clockEl.textContent = `${hours}:${minutes}:${seconds}`;
-  }
-
-  // Update clock immediately and then every second
-  updateTime();
-  setInterval(updateTime, 1000);
-}
-
-/**
- * 2. Proportional Scaling Engine
- * Scales the 1200x750 kiosk container to fit the viewport borderlessly on resize/load.
- */
-function initScaling() {
-  const wrapper = document.querySelector(".kiosk-wrapper");
-  if (!wrapper) return;
-
-  // Add fullscreen class dynamically if window dimensions require it, or always let it scale
-  // Check url params for fullscreen=true
-  const urlParams = new URLSearchParams(window.location.search);
-  const isFullscreen = urlParams.get("fullscreen") === "true";
-  
-  if (isFullscreen) {
-    document.body.classList.add("fullscreen-mode");
-  }
-
-  function adjustScale() {
-    const baseWidth = 1200;
-    const baseHeight = 750;
-    
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
-
-    // Calculate scale factor
-    const scaleX = windowWidth / baseWidth;
-    const scaleY = windowHeight / baseHeight;
-    const scale = Math.min(scaleX, scaleY);
-
-    // Apply scale matrix transformation centered
-    wrapper.style.transform = `translate(-50%, -50%) scale(${scale})`;
-  }
-
-  // Bind scale adjuster
-  adjustScale();
-  window.addEventListener("resize", adjustScale);
-}
-
-/**
- * 3. Kiosk Modal & Video Core System
+ * Kiosk Modal & Video Core System
  */
 function initKioskSystem() {
   // Elements
   const examButtons = document.querySelectorAll(".exam-card-btn");
   const modalOverlay = document.getElementById("video-modal");
-  const modalBadge = document.getElementById("modal-badge-letter");
   const modalTitle = document.getElementById("modal-title-text");
   const closeBtn = document.getElementById("btn-close-modal");
   const doneBtn = document.getElementById("btn-modal-done");
@@ -102,9 +30,9 @@ function initKioskSystem() {
 
   // Exam Titles Dictionary
   const examTitles = {
-    A: "위내시경·유방촬영 안내",
-    B: "골밀도 검사 안내",
-    C: "대장내시경 검사 안내"
+    A: "A. 위내시경·유방촬영 안내",
+    B: "B. 골밀도 검사 안내",
+    C: "C. 대장내시경 안내"
   };
 
   // Click handler for A/B/C exam buttons
@@ -119,8 +47,7 @@ function initKioskSystem() {
 
   // Open modal and load/play video
   function openVideoModal(type, videoUrl) {
-    // 1. Update titles & badges
-    modalBadge.textContent = type;
+    // 1. Update titles & codes
     modalTitle.textContent = examTitles[type] || "안내 동영상 재생";
     fallbackUrlCode.textContent = videoUrl;
 
@@ -227,28 +154,6 @@ function initKioskSystem() {
     fallbackStatusMsg.textContent = "안내 영상 스트리밍 연결 실패";
     fallbackOverlay.querySelector(".status-icon").className = "fa-solid fa-circle-exclamation status-icon";
     console.log(`Fallback display triggered for url: ${url}`);
-  }
-
-  // Simulated emergency call notification
-  const callBtn = document.getElementById("btn-staff-call");
-  if (callBtn) {
-    callBtn.addEventListener("click", () => {
-      playBeep(900, 0.25);
-      const originalText = callBtn.innerHTML;
-      alert("🚨 직원을 호출하였습니다. 잠시만 기다려 주세요.");
-      
-      callBtn.style.backgroundColor = "#FEE2E2";
-      callBtn.style.color = "#991B1B";
-      callBtn.style.borderColor = "#FCA5A5";
-      callBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> 호출 완료`;
-      
-      setTimeout(() => {
-        callBtn.style.backgroundColor = "";
-        callBtn.style.color = "";
-        callBtn.style.borderColor = "";
-        callBtn.innerHTML = originalText;
-      }, 5000);
-    });
   }
 
   // Interactive Beep tone for tactile feedback

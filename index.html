@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>K-종합건강검진센터 안내 키오스크</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>안내 키오스크</title>
   
   <!-- Google Fonts: Outfit (Accent) & Noto Sans KR (Korean) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,136 +17,97 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div class="kiosk-wrapper">
-    <div class="kiosk-container">
+  
+  <!-- Main View Container -->
+  <div class="kiosk-container">
+    <main class="kiosk-viewport">
       
-      <!-- Top Header Panel -->
-      <header class="kiosk-header">
-        <div class="header-logo">
-          <i class="fa-solid fa-hospital-user logo-icon"></i>
-          <div class="logo-text">
-            <span class="hospital-name">K-종합건강검진센터</span>
-            <span class="kiosk-badge">안내 키오스크</span>
-          </div>
-        </div>
-        <div class="header-time" id="current-clock">
-          16:10:29
-        </div>
-      </header>
+      <!-- Top Heading Section -->
+      <div class="main-header-block">
+        <h1 class="main-title">📢 검사 항목을 선택하시면 <span class="point-blue">안내 음성</span>이 나옵니다.</h1>
+      </div>
 
-      <!-- Main SPA Viewport -->
-      <main class="kiosk-viewport">
-        <section id="screen-main" class="screen-view active">
-          
-          <div class="main-header-block">
-            <h1 class="main-title">검사 항목을 선택하시면 <span class="point-blue">안내 영상</span>이 나옵니다.</h1>
-            <p class="main-subtitle">원하시는 검진 카드를 터치해 주세요.</p>
-          </div>
+      <!-- Missing Info Box (Critical) -->
+      <div class="info-card-box">
+        <h2 class="info-card-title">[ 여러 검사 동시 진행 시 선택 안내 ]</h2>
+        <ul class="info-card-list">
+          <li>• 대장내시경이 있다면? ➡️ <span class="point-blue-text">[C]</span> 선택</li>
+          <li>• 대장내시경 없이 골밀도가 있다면? ➡️ <span class="point-blue-text">[B]</span> 선택</li>
+          <li>• 위내시경이나 유방촬영이 있다면? ➡️ <span class="point-blue-text">[A]</span> 선택</li>
+        </ul>
+      </div>
 
-          <!-- Horizontal 3 Cards Alignment -->
-          <div class="exam-types-row">
-            <!-- Card A: Gastroscopy & Mammography -->
-            <button class="exam-card-btn" data-type="A" data-video="https://r2.dev">
-              <div class="card-inner-glow"></div>
-              <div class="card-letter-badge">A</div>
-              <div class="card-content-box">
-                <i class="fa-solid fa-stethoscope card-icon"></i>
-                <h3 class="card-name">위내시경·유방촬영</h3>
-                <span class="card-action-hint">터치하여 영상 보기 <i class="fa-solid fa-circle-play"></i></span>
-              </div>
+      <!-- Three Main Card Buttons -->
+      <div class="exam-types-row">
+        <!-- Card A: Gastroscopy & Mammography -->
+        <button class="exam-card-btn" data-type="A" data-video="https://r2.dev">
+          A. 위내시경·유방촬영
+        </button>
+
+        <!-- Card B: Bone Density Test -->
+        <button class="exam-card-btn" data-type="B" data-video="https://r2.dev">
+          B. 골밀도 검사
+        </button>
+
+        <!-- Card C: Colonoscopy -->
+        <button class="exam-card-btn" data-type="C" data-video="https://r2.dev">
+          C. 대장내시경
+        </button>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Centered Popup Modal with 50% Dark Background Dimming -->
+  <div id="video-modal" class="modal-overlay">
+    <div class="modal-card">
+      
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h2 id="modal-title-text" class="modal-title">위내시경·유방촬영 안내</h2>
+        <!-- Close (X) button inside the overlay -->
+        <button id="btn-close-modal" class="btn-close" aria-label="닫기">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Video Body Section -->
+      <div class="modal-body">
+        <div class="video-wrapper">
+          <!-- Video Tag: autoplay, muted, playsinline are strictly included -->
+          <video id="kiosk-video" autoplay muted playsinline width="100%" height="100%">
+            Your browser does not support the video tag.
+          </video>
+
+          <!-- Custom Video Control Overlays -->
+          <div class="video-overlay-controls">
+            <button id="btn-video-mute" class="video-control-btn mute-btn" aria-label="음소거 해제">
+              <i id="mute-icon" class="fa-solid fa-volume-xmark"></i>
             </button>
-
-            <!-- Card B: Bone Density Test -->
-            <button class="exam-card-btn" data-type="B" data-video="https://r2.dev">
-              <div class="card-inner-glow"></div>
-              <div class="card-letter-badge">B</div>
-              <div class="card-content-box">
-                <i class="fa-solid fa-bone card-icon"></i>
-                <h3 class="card-name">골밀도 검사</h3>
-                <span class="card-action-hint">터치하여 영상 보기 <i class="fa-solid fa-circle-play"></i></span>
-              </div>
-            </button>
-
-            <!-- Card C: Colonoscopy -->
-            <button class="exam-card-btn" data-type="C" data-video="https://r2.dev">
-              <div class="card-inner-glow"></div>
-              <div class="card-letter-badge">C</div>
-              <div class="card-content-box">
-                <i class="fa-solid fa-hospital card-icon"></i>
-                <h3 class="card-name">대장내시경</h3>
-                <span class="card-action-hint">터치하여 영상 보기 <i class="fa-solid fa-circle-play"></i></span>
-              </div>
+            <button id="btn-video-replay" class="video-control-btn replay-btn" aria-label="다시 재생">
+              <i class="fa-solid fa-rotate-right"></i>
             </button>
           </div>
-        </section>
-      </main>
 
-      <!-- Bottom Footer Panel -->
-      <footer class="kiosk-footer">
-        <div class="footer-privacy">
-          <i class="fa-solid fa-circle-info"></i> 탈의실 내부 카메라는 작동하지 않는 안심 안내 화면입니다.
-        </div>
-        <div class="footer-call">
-          <button id="btn-staff-call" class="btn-staff-call">
-            <i class="fa-solid fa-bell"></i> 직원 호출하기
-          </button>
-        </div>
-      </footer>
-
-      <!-- Centered Popup Modal with 50% Dimmed Overlay -->
-      <div id="video-modal" class="modal-overlay">
-        <div class="modal-card">
-          <!-- Modal Header -->
-          <div class="modal-header">
-            <div class="modal-title-box">
-              <span id="modal-badge-letter" class="modal-type-badge">A</span>
-              <h2 id="modal-title-text" class="modal-title">위내시경·유방촬영 안내</h2>
+          <!-- High-Fidelity Connection/Error Fallback Overlay -->
+          <div id="video-fallback" class="video-fallback-overlay active">
+            <div class="spinner-loader"></div>
+            <div class="fallback-status">
+              <i class="fa-solid fa-circle-exclamation status-icon"></i>
+              <span class="status-msg">스트리밍 서버 연결 중...</span>
             </div>
-            <!-- Close (X) button inside the overlay -->
-            <button id="btn-close-modal" class="btn-close" aria-label="닫기">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
-          </div>
-
-          <!-- Video Body Panel -->
-          <div class="modal-body">
-            <div class="video-wrapper">
-              <!-- Video Tag: autoplay, muted, playsinline are strictly included -->
-              <video id="kiosk-video" autoplay muted playsinline width="100%" height="100%">
-                Your browser does not support the video tag.
-              </video>
-
-              <!-- Custom Video Control Overlays -->
-              <div class="video-overlay-controls">
-                <button id="btn-video-mute" class="video-control-btn mute-btn" aria-label="음소거 해제">
-                  <i id="mute-icon" class="fa-solid fa-volume-xmark"></i>
-                </button>
-                <button id="btn-video-replay" class="video-control-btn replay-btn" aria-label="다시 재생">
-                  <i class="fa-solid fa-rotate-right"></i>
-                </button>
-              </div>
-
-              <!-- High-Fidelity Connection/Error Fallback Overlay -->
-              <div id="video-fallback" class="video-fallback-overlay active">
-                <div class="spinner-loader"></div>
-                <div class="fallback-status">
-                  <i class="fa-solid fa-circle-exclamation status-icon"></i>
-                  <span class="status-msg">스트리밍 서버 연결 중...</span>
-                </div>
-                <div class="fallback-details">
-                  <p class="fallback-url-label">직접 연결 대상 URL:</p>
-                  <code id="fallback-target-url" class="fallback-url-code">https://r2.dev</code>
-                  <p class="fallback-note">본 시스템은 미디어 스트리밍이 차단되거나 유효하지 않은 형식의 경우에도 화면 정지 없이 복구 가이드를 제공합니다.</p>
-                </div>
-              </div>
+            <div class="fallback-details">
+              <p class="fallback-url-label">직접 연결 대상 URL:</p>
+              <code id="fallback-target-url" class="fallback-url-code">https://r2.dev</code>
+              <p class="fallback-note">본 시스템은 미디어 스트리밍이 차단되거나 유효하지 않은 형식의 경우에도 화면 정지 없이 복구 가이드를 제공합니다.</p>
             </div>
           </div>
-          
-          <!-- Modal Action Footer -->
-          <div class="modal-action-footer">
-            <button id="btn-modal-done" class="btn-modal-done">안내 확인 완료</button>
-          </div>
         </div>
+      </div>
+      
+      <!-- Modal Action Footer -->
+      <div class="modal-action-footer">
+        <button id="btn-modal-done" class="btn-modal-done">안내 확인 완료</button>
       </div>
 
     </div>
