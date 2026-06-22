@@ -1,8 +1,10 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
 /* ==========================================================================
    GAON KIOSK DESIGN SYSTEM & BASE VARIABLES
    ========================================================================== */
 :root {
-  --font-primary: 'Noto Sans KR', sans-serif;
+  --font-primary: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
   --font-accent: 'Outfit', sans-serif;
 
   /* HSL Tailored Color Palette (Premium Dark Mode) */
@@ -62,6 +64,11 @@ body {
   justify-content: center;
   align-items: center;
   padding: 0 !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  word-break: keep-all;
+  overflow-wrap: break-word;
   
   /* Ambient Background Lighting */
   background-image: 
@@ -220,8 +227,9 @@ body {
   font-size: 32px;
   font-weight: 900;
   color: var(--color-text);
-  letter-spacing: -0.5px;
+  letter-spacing: -0.03em;
   line-height: 1.4;
+  word-break: keep-all;
 }
 
 .point-blue {
@@ -236,6 +244,9 @@ body {
   font-size: 18px;
   color: var(--color-text-muted);
   margin-top: 10px;
+  letter-spacing: -0.02em;
+  line-height: 1.5;
+  word-break: keep-all;
 }
 
 /* Main Cards Container: Horizontal row with 32px gaps */
@@ -339,7 +350,9 @@ body {
   font-weight: 800;
   color: var(--color-text);
   text-align: center;
-  line-height: 1.3;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  word-break: keep-all;
 }
 
 .card-action-hint {
@@ -503,7 +516,9 @@ body {
   font-size: 24px;
   font-weight: 800;
   color: var(--color-text);
-  letter-spacing: -0.5px;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  word-break: keep-all;
 }
 
 /* Close (X) button inside the overlay */
