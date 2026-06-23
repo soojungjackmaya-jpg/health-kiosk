@@ -3,7 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>안내 키오스크</title>
+  <title>검진 전 탈의안내</title>
+  
+  <!-- SEO & Open Graph Metadata -->
+  <meta name="description" content="검진 전 올바른 검진 가운 및 옷차림을 위한 탈의 안내 시스템입니다.">
+  <meta property="og:title" content="검진 전 탈의안내">
+  <meta property="og:description" content="검사 항목을 선택하시면 환복 안내 영상을 시청하실 수 있습니다.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="검진 전 탈의안내">
+  <meta name="twitter:description" content="검사 항목을 선택하시면 환복 안내 영상을 시청하실 수 있습니다.">
   
   <!-- Google Fonts: Outfit (Accent) & Noto Sans KR (Korean) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,17 +54,17 @@
       <!-- Three Main Card Buttons -->
       <div class="exam-types-row">
         <!-- Card A: Gastroscopy & Mammography -->
-        <button class="exam-card-btn" data-type="A" data-video="https://r2.dev/typeA.mp4">
+        <button class="exam-card-btn" data-type="A" data-video="C:/Users/user/Desktop/A타입.mp4">
           A. 위내시경·유방촬영
         </button>
 
         <!-- Card B: Bone Density Test -->
-        <button class="exam-card-btn" data-type="B" data-video="https://r2.dev/typeB.mp4">
+        <button class="exam-card-btn" data-type="B" data-video="C:/Users/user/Desktop/B타입.mp4">
           B. 골밀도 검사
         </button>
 
         <!-- Card C: Colonoscopy -->
-        <button class="exam-card-btn" data-type="C" data-video="https://r2.dev/typeC.mp4">
+        <button class="exam-card-btn" data-type="C" data-video="C:/Users/user/Desktop/C타입.mp4">
           C. 대장내시경
         </button>
       </div>
@@ -79,19 +88,31 @@
       <!-- Video Body Section -->
       <div class="modal-body">
         <div class="video-wrapper">
-          <!-- iframe Tag: replaces the raw video player to support Google Drive preview -->
-          <iframe id="kiosk-iframe" width="100%" height="100%" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          <!-- Video Tag: autoplay, muted, playsinline are strictly included -->
+          <video id="kiosk-video" autoplay muted playsinline width="100%" height="100%">
+            Your browser does not support the video tag.
+          </video>
+
+          <!-- Custom Video Control Overlays -->
+          <div class="video-overlay-controls">
+            <button id="btn-video-mute" class="video-control-btn mute-btn" aria-label="음소거 해제">
+              <i id="mute-icon" class="fa-solid fa-volume-xmark"></i>
+            </button>
+            <button id="btn-video-replay" class="video-control-btn replay-btn" aria-label="다시 재생">
+              <i class="fa-solid fa-rotate-right"></i>
+            </button>
+          </div>
 
           <!-- High-Fidelity Connection/Error Fallback Overlay -->
           <div id="video-fallback" class="video-fallback-overlay active">
             <div class="spinner-loader"></div>
             <div class="fallback-status">
               <i class="fa-solid fa-circle-notch fa-spin status-icon"></i>
-              <span class="status-msg">안내 영상을 불러오는 중...</span>
+              <span class="status-msg">로컬 비디오 로드 중...</span>
             </div>
             <div class="fallback-details">
-              <p class="fallback-url-label">연결 대상 URL:</p>
-              <code id="fallback-target-url" class="fallback-url-code">https://drive.google.com</code>
+              <p class="fallback-url-label">로컬 파일 경로:</p>
+              <code id="fallback-target-url" class="fallback-url-code">C:/Users/user/Desktop/A타입.mp4</code>
             </div>
           </div>
         </div>
