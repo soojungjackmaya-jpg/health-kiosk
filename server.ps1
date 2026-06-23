@@ -61,9 +61,23 @@ while ($true) {
         # Decode URL path (e.g. %20 -> space)
         $urlPath = [System.Uri]::UnescapeDataString($urlPath)
 
-        # Clean path and join with root (normalize path separators)
-        $urlPathClean = $urlPath.Replace("/", "\").TrimStart('\')
-        $localPath = Join-Path $root $urlPathClean
+        # Clean path and normalize path separators
+        $urlPathClean = $urlPath.Replace("/", "\")
+        $localPath = ""
+        if ($urlPathClean -match "^\\?[A-Za-z]:") {
+            # Handle absolute local path requests (e.g. C:\Users\...)
+            $localPath = $urlPathClean.TrimStart('\')
+        } else {
+            $urlPathClean = $urlPathClean.TrimStart('\')
+            $localPath = Join-Path $root $urlPathClean
+        }
+
+        # Dynamically resolve any Desktop video request to the current user's desktop path using %USERPROFILE%
+        if ($localPath -match "Desktop\\[A-C]타입\.mp4$") {
+            $fileName = [System.IO.Path]::GetFileName($localPath)
+            $desktopPath = Join-Path $env:USERPROFILE "Desktop"
+            $localPath = Join-Path $desktopPath $fileName
+        }
 
         # Resolve full path to prevent directory traversal
         $fullPath = [System.IO.Path]::GetFullPath($localPath)
@@ -76,8 +90,16 @@ while ($true) {
             }
         }
 
-        # Verify the path is within the root directory and the file exists
-        if ($fullPath.StartsWith($root, [System.StringComparison]::OrdinalIgnoreCase) -and (Test-Path $fullPath -PathType Leaf)) {
+        # Verify if path is allowed (within root directory, or matching specific desktop videos in user's profile)
+        $isAllowed = $false
+        $actualDesktopPath = Join-Path $env:USERPROFILE "Desktop"
+        if ($fullPath.StartsWith($root, [System.StringComparison]::OrdinalIgnoreCase)) {
+            $isAllowed = $true
+        } elseif ($fullPath.StartsWith($actualDesktopPath, [System.StringComparison]::OrdinalIgnoreCase) -and ($fullPath -match "\\[A-C]타입\.mp4$")) {
+            $isAllowed = $true
+        }
+
+        if ($isAllowed -and (Test-Path $fullPath -PathType Leaf)) {
             $bytes = [System.IO.File]::ReadAllBytes($fullPath)
             
             # Determine Content Type
@@ -90,6 +112,7 @@ while ($true) {
             elseif ($ext -eq ".jpg" -or $ext -eq ".jpeg") { $mime = "image/jpeg" }
             elseif ($ext -eq ".svg") { $mime = "image/svg+xml" }
             elseif ($ext -eq ".json") { $mime = "application/json; charset=utf-8" }
+            elseif ($ext -eq ".mp4") { $mime = "video/mp4" }
 
             # Send HTTP headers
             $writer.WriteLine("HTTP/1.1 200 OK")

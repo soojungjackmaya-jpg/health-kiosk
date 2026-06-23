@@ -1,6 +1,7 @@
 /**
-   GAON Health Checkup Kiosk - Video App Controller (Google Drive iframe version)
-   Manages interactive modals, iframe source swapping, and loading spinner overlays.
+   GAON Health Checkup Kiosk - Video App Controller (Local PC Video Version)
+   Manages clock updates, responsive scaling, interactive modals, video preloading/autoplay,
+   audio bypassing constraints, and fallback error display for local video streams.
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -8,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /**
- * Kiosk Modal & iframe Video Core System
+ * Kiosk Modal & Video Core System
  */
 function initKioskSystem() {
   // Elements
@@ -18,7 +19,11 @@ function initKioskSystem() {
   const closeBtn = document.getElementById("btn-close-modal");
   const doneBtn = document.getElementById("btn-modal-done");
   
-  const iframe = document.getElementById("kiosk-iframe");
+  const video = document.getElementById("kiosk-video");
+  const muteBtn = document.getElementById("btn-video-mute");
+  const muteIcon = document.getElementById("mute-icon");
+  const replayBtn = document.getElementById("btn-video-replay");
+  
   const fallbackOverlay = document.getElementById("video-fallback");
   const fallbackUrlCode = document.getElementById("fallback-target-url");
   const fallbackStatusMsg = fallbackOverlay.querySelector(".status-msg");
@@ -40,7 +45,7 @@ function initKioskSystem() {
     });
   });
 
-  // Open modal and load Google Drive preview link
+  // Open modal and load/play video
   function openVideoModal(type, videoUrl) {
     // 1. Update titles & codes
     modalTitle.textContent = examTitles[type] || "안내 동영상 재생";
@@ -48,31 +53,51 @@ function initKioskSystem() {
 
     // Reset Fallback Overlay to loading state
     fallbackOverlay.classList.add("active");
-    fallbackStatusMsg.textContent = "안내 영상을 불러오는 중...";
+    fallbackStatusMsg.textContent = "로컬 비디오 로드 중...";
     fallbackOverlay.querySelector(".status-icon").className = "fa-solid fa-circle-notch status-icon fa-spin";
 
-    // 2. Set iframe src (trigger load)
-    iframe.src = videoUrl;
+    // 2. Configure video tags
+    video.src = videoUrl;
+    video.load();
 
     // 3. Open overlay panel
     modalOverlay.classList.add("active");
 
     // Tactile feedback sound
     playBeep(650, 0.08);
+
+    // 4. Autoplay execution with browser audio constraints bypassed (initially muted)
+    video.muted = true;
+    updateMuteUI(true);
+
+    // Play video
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          // Playback started successfully
+          console.log(`Video playback started for: ${videoUrl}`);
+        })
+        .catch(err => {
+          console.warn("Local file autoplay failed or blocked:", err);
+          showFallbackError(videoUrl);
+        });
+    }
   }
 
-  // Handle iframe load completion to hide the loader spinner
-  iframe.onload = () => {
+  // Hide the loading overlay when the video starts playing
+  video.onplaying = () => {
     fallbackOverlay.classList.remove("active");
-    console.log("iframe content loaded successfully.");
+    console.log("Video is now playing. Hiding loading screen.");
   };
 
   // Handle Close Action
   function closeVideoModal() {
     modalOverlay.classList.remove("active");
     
-    // Clear iframe source to stop playback immediately
-    iframe.src = "about:blank";
+    // Stop video and release resource
+    video.pause();
+    video.src = "";
     
     playBeep(500, 0.08);
   }
@@ -87,6 +112,44 @@ function initKioskSystem() {
       closeVideoModal();
     }
   });
+
+  // Mute/Unmute toggle handler
+  muteBtn.addEventListener("click", () => {
+    video.muted = !video.muted;
+    updateMuteUI(video.muted);
+    playBeep(600, 0.04);
+  });
+
+  function updateMuteUI(isMuted) {
+    if (isMuted) {
+      muteIcon.className = "fa-solid fa-volume-xmark";
+      muteBtn.classList.add("muted-active");
+    } else {
+      muteIcon.className = "fa-solid fa-volume-high";
+      muteBtn.classList.remove("muted-active");
+    }
+  }
+
+  // Replay handler
+  replayBtn.addEventListener("click", () => {
+    video.currentTime = 0;
+    video.play();
+    playBeep(700, 0.05);
+  });
+
+  // Video playback error listener
+  video.addEventListener("error", (e) => {
+    console.warn("HTML5 Video element encountered error:", e);
+    showFallbackError(video.src);
+  });
+
+  // Show Connection/Error Fallback Panel
+  function showFallbackError(url) {
+    fallbackOverlay.classList.add("active");
+    fallbackStatusMsg.textContent = "로컬 비디오 재생 실패";
+    fallbackOverlay.querySelector(".status-icon").className = "fa-solid fa-circle-exclamation status-icon";
+    console.log(`Fallback display triggered for url: ${url}`);
+  }
 
   // Interactive Beep tone for tactile feedback
   function playBeep(frequency = 800, duration = 0.1) {
