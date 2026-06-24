@@ -14,7 +14,10 @@ try {
     exit
 }
 
-$root = "C:\Users\user\.gemini\antigravity\scratch\health-checkup-video-kiosk"
+$root = $PSScriptRoot
+if ([string]::IsNullOrEmpty($root)) {
+    $root = (Get-Item .).FullName
+}
 
 # Loop to handle incoming requests
 while ($true) {
